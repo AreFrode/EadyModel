@@ -1,8 +1,6 @@
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 from timer import timer
-from solvers import forward_euler, runge_kutta2
 
 class eady:
     """
@@ -78,11 +76,4 @@ class eady:
         plt.colorbar()
         plt.title("fourier")
         # plt.savefig(f"d2-nx{nx}.jpg")
-        plt.show()
-
-if __name__ == "__main__":
-    eady = eady(64)
-    eady.initialize(lambda x,y: np.sin(3*x)*np.sin(4*y))
-    eady.solve_toplayer(10, 0.01, runge_kutta2)
-    # eady.solve_toplayer(10, 0.01, forward_euler) 
-    
+        plt.show() 
