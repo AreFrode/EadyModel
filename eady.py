@@ -1,6 +1,8 @@
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 from timer import timer
+from solvers import forward_euler, runge_kutta2
 
 class eady:
     """
@@ -34,8 +36,10 @@ class eady:
             for j in range(len(x)):
                 self.psi[i][j] = streamfunc(x[i], x[j])
 
+    # @timer
     def solve_toplayer(self, nk, dt, solver):
-        self.m2 = np.stack((self.m,)*self.nx,axis=1)
+        self.m2 = np.stack((self.m,)*self.nx,axis=0)
+        # Den linja med self.m2 må vi diskutere
         psit = np.fft.fft2(self.psi)
         stop = int(nk/dt)
         counter = 0
@@ -46,7 +50,7 @@ class eady:
                 counter = 0
                 self.plot_real(psit)
 
-            psit = solver(psit, self.alpha, dt)
+            psit = solver(psit, self.alpha, self.m2, dt)
             counter += 1
 
         self.plot_real(psit)
@@ -76,14 +80,9 @@ class eady:
         # plt.savefig(f"d2-nx{nx}.jpg")
         plt.show()
 
-def forward_euler(psit, alpha, dt):
-    return psit - ((1j*dt)/alpha)*(1+alpha)*psit
-
 if __name__ == "__main__":
     eady = eady(64)
     eady.initialize(lambda x,y: np.sin(3*x)*np.sin(4*y))
-    eady.solve_toplayer(10, 0.01, forward_euler)
-    
-
-    
+    eady.solve_toplayer(10, 0.01, runge_kutta2)
+    # eady.solve_toplayer(10, 0.01, forward_euler) 
     
