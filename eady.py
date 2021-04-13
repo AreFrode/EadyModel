@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 from timer import timer
 
 class eady:
@@ -37,11 +38,10 @@ class eady:
     # @timer
     def solve_toplayer(self, nk, dt, solver):
         self.m2 = np.stack((self.m,)*self.nx,axis=0)
-        # Den linja med self.m2 må vi diskutere
         psit = np.fft.fft2(self.psi)
         stop = int(nk/dt)
         counter = 0
-        plot_interval = int(0.2*stop)
+        plot_interval = int(0.1*stop)
 
         for k in range(stop):
             if (counter == plot_interval):
@@ -52,6 +52,27 @@ class eady:
             counter += 1
 
         self.plot_real(psit)
+
+    def animate_toplayer(self, nk, dt, solver):
+        self.m2 = np.stack((self.m,)*self.nx,axis=0)
+        psit = np.fft.fft2(self.psi)
+        G = []
+        G.append(self.psi)
+
+        for k in range(int(nk/dt)):
+            psit = solver(psit, self.alpha, self.m2, dt)
+            G.append(np.real(np.fft.ifft2(psit)))
+
+        fig, ax = plt.subplots()
+        
+        def animate(i):
+            ax.collections = []
+            ax.contourf(G[i])
+
+        anim = FuncAnimation(fig, animate, interval=10)
+
+        plt.draw()
+        plt.show()
     
     def plot_real(self, psit):
         plt.contourf(np.real(np.fft.ifft2(psit)))
