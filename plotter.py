@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 def plot_real(psit):
     plt.contourf(np.real(np.fft.ifft2(psit)))
