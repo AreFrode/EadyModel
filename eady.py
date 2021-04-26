@@ -85,6 +85,18 @@ class eady:
 
         plt.draw()
         plt.show()
+
+    def alternative_twolayer(self, A, B, m, n, nk, dt):
+        self.m2 = np.stack((self.m,)*self.nx,axis=0)
+        C = np.array([[A*np.ones(self.alpha.shape),
+                       B*np.ones(self.alpha.shape)]])
+        N = np.array([[np.exp(-self.alpha), -np.ones(self.alpha.shape)], [np.ones(self.alpha.shape), -np.exp(-self.alpha)]])
+        M = np.array([[((1j*m)/self.alpha)*np.exp(-self.alpha), (1j*m)/self.alpha],
+                      [-(1-(1./self.alpha))*1j*m, (1 + (1./self.alpha))*1j*m*np.exp(-self.alpha)]])
+
+        # This solution results in a singular
+        # matrix error, is thus not correct
+
  
     def simple_twolayer(self, A, B, m, n, nk, dt):
         # Hardwired model, results seem to be wrong
